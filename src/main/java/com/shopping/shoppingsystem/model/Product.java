@@ -57,7 +57,7 @@ public class Product {
     @Size(max=500, message = "A Descrição não deve exceder 500 caracteres.")
     @Column(length = 500)
     private String description;
-    
+
     @Size(max=255, message = "O link da imagem é muito longo.")
     private String imageUrl;
 

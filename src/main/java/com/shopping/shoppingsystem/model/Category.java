@@ -36,7 +36,7 @@ public class Category {
     @Size(min = 3, max = 50, message = "O nome da Categoria deve ter entre 3 e 50 caracteres.")
     @Column(nullable = false, length = 50, unique = true)
     private String name;
-    
+
     @OneToMany(mappedBy = "category", cascade = CascadeType.ALL, fetch = FetchType.LAZY)
     private List<Product> products = new ArrayList<>();
 
