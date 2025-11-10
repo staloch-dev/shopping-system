@@ -1,0 +1,131 @@
+<!DOCTYPE html>
+<html lang="pt-br" xmlns:th="http://www.thymeleaf.org">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <link rel="stylesheet" th:href="@{css/style.css}">
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.5.0/css/all.min.css">
+    <title>Gerenciador de Produtos</title>
+</head>
+<body>
+    <div class="container">
+        <h1>Gerenciador de Produtos</h1>
+
+        <p th:if="${successMessage}" class="success-message-box" th:text="${successMessage}"></p>
+
+        <h2>Adicionar Novo Produto</h2>
+        <form th:action="@{/add}" th:object="${newProduct}" method="post" class="product-form">
+
+            <input type="text" th:field="*{name}" placeholder="Nome do produto" required/>
+            <span th:if="${#fields.hasErrors('name')}" th:errors="*{name}" class="error-message"></span>
+
+            <input type="text" th:field="*{brand}" placeholder="Marca (Opcional)"/>
+            <span th:if="${#fields.hasErrors('brand')}" th:errors="*{brand}" class="error-message"></span>
+
+            <input type="number" step="0.01" th:field="*{price}" placeholder="Preço" required/>
+            <span th:if="${#fields.hasErrors('price')}" th:errors="*{price}" class="error-message"></span>
+
+            <input type="number" th:field="*{quantityInStock}" placeholder="Quantidade em Estoque" required/>
+            <span th:if="${#fields.hasErrors('quantityInStock')}" th:errors="*{quantityInStock}" class="error-message"></span>
+
+            <input type="text" th:field="*{description}" placeholder="Descrição do produto"/>
+            <span th:if="${#fields.hasErrors('description')}" th:errors="*{description}" class="error-message"></span>
+
+            <a th:href="@{/categorias}" class="btn btn-secondary btn-categories">
+                <i class="fas fa-sitemap" aria-hidden="true"></i> Gerenciar Categorias
+            </a>
+
+            <button id="btnAdd" type="submit" class="btn-save">Salvar Produto</button>
+        </form>
+
+        <h2>Produtos Cadastrados</h2>
+
+        <table>
+            <thead>
+                <tr>
+                    <th>Nome</th>
+                    <th>Marca</th>
+                    <th>Preço</th>
+                    <th>Estoque</th>
+                    <th>Ações</th>
+                </tr>
+            </thead>
+            <tbody>
+                <tr th:if="${productsPage.empty}">
+                    <td colspan="5" class="no-products">Nenhum produto cadastrado!</td>
+                </tr>
+                <tr th:each="product : ${productsPage.content}">
+                    <td th:text="${product.name}">Nome do Produto</td>
+                    <td th:text="${product.brand}">Marca X</td>
+                    <td th:text="${#numbers.formatCurrency(product.price)}">R$ 10,00</td>
+                    <td th:text="${product.quantityInStock}" th:classappend="${product.quantityInStock <= 5 ? 'low-stock-warning' : ''}">10</td>
+                    <td class="actions">
+                        <a th:href="@{/edit/{id}(id=${product.id})}" class="btn btn-edit" title="Editar Produto">
+                            <i class="fa-solid fa-pen-to-square" aria-hidden="true"></i>
+                        </a>
+
+                        <button onclick="prepareDelete(this)"
+                                th:data-id="${product.id}"
+                                th:data-name="${product.name}"
+                                class="btn btn-danger"
+                                title="Excluir Produto"
+                                type="button">
+                            <i class="fa-solid fa-trash-can" aria-hidden="true"></i>
+                        </button>
+                    </td>
+                </tr>
+            </tbody>
+        </table>
+
+        <div class="pagination">
+            <span th:if="${!productsPage.first}">
+                <a th:href="@{/(page=${productsPage.number - 1})}" class="page-btn" title="Página Anterior">
+                    <i class="fa-solid fa-chevron-left" aria-hidden="true"></i>
+                </a>
+            </span>
+            <span th:if="${productsPage.first}">
+                <span class="page-btn disabled" title="Primeira página" aria-hidden="true">
+                    <i class="fa-solid fa-chevron-left"></i>
+                </span>
+            </span>
+            <span class="page-info">
+                Página <strong th:text="${productsPage.number + 1}">1</strong>
+                de <strong th:text="${productsPage.totalPages}">1</strong>
+            </span>
+            <span th:if="${!productsPage.last}">
+                <a th:href="@{/(page=${productsPage.number + 1})}" class="page-btn" title="Próxima página" aria-label="Próxima página">
+                    <i class="fa-solid fa-chevron-right" aria-hidden="true"></i>
+                </a>
+            </span>
+            <span th:if="${productsPage.last}">
+                <span class="page-btn disabled" title="Última página" aria-hidden="true">
+                    <i class="fa-solid fa-chevron-right"></i>
+                </span>
+            </span>
+        </div>
+    </div>
+
+    <form id="deleteForm" method="post" th:action="@{/delete/{id}(id='')}" style="display: none;"></form>
+
+    <script>
+        // Função para simular a confirmação e enviar o POST de exclusão.
+        function prepareDelete(button) {
+            const productId = button.getAttribute('data-id');
+            const productName = button.getAttribute('data-name');
+
+            // ATENÇÃO: Substitua esta função 'confirm' por um MODAL CUSTOMIZADO (HTML/CSS/JS) no seu projeto.
+            if (confirm(`Tem certeza que deseja excluir o produto: ${productName}?`)) {
+                const deleteForm = document.getElementById('deleteForm');
+                deleteForm.action = `/delete/${productId}`;
+                deleteForm.submit();
+            }
+        }
+
+        // HACK: Simulação de confirmação, que deve ser substituída por um modal customizado
+        const confirm = (message) => {
+            console.warn("ATENÇÃO: Substitua 'window.confirm' por um MODAL CUSTOMIZADO.");
+            return window.confirm(message);
+        };
+    </script>
+</body>
+</html>
