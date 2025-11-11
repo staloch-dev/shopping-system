@@ -1,0 +1,30 @@
+<!DOCTYPE html>
+<html lang="pt-br" xmlns:th="http://www.thymeleaf.org">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title th:text="${categoria.id == null ? 'Cadastrar Nova Categoria' : 'Editar Categoria'}">Formulário de Categoria</title>
+</head>
+    <body>
+        <div class="container">
+            <h1 th:text="${categoria.id == null ? '➕ Cadastrar Nova Categoria' : '✏️ Editar Categoria: ' + categoria.name}">Formulário de Categoria</h1>
+            
+            <a th:href="@{/categorias}" class="btn-back">⬅️ Voltar para a Lista de Categorias</a>
+
+            <div th:with="actionUrl=${categoria.id == null ? '/categorias/cadastrar' : '/categorias/atualizar/' + categoria.id}" class="form-wrapper">
+                
+                <form th:action="@{${actionUrl}}" th:object="${categoria}" method="post" class="category-form">
+                    <input type="hidden" th:field="*{id}" />
+
+                    <div class="form-group">
+                        <label for="name">Nome da Categoria:</label>
+                        <input type="text" id="name" th:field="*{name}" placeholder="Nome da Categoria" required th:classappend="${#fields.hasErrors('name') ? 'is-invalid' : ''}"/>
+                        <p th:if="${#fields.hasErrors('name')}" th:errors="*{name}" class="error-message"></p>
+                    </div>
+
+                    <button type="submit" class="btn-submit" th:text="${categoria.id == null ? 'Cadastrar Categoria' : 'Atualizar Categoria'}">Salvar</button>
+                </form>
+            </div>
+        </div> 
+</body>
+</html>

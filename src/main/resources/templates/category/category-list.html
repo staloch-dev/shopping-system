@@ -1,0 +1,72 @@
+<!DOCTYPE html>
+<html lang="pt-br" xmlns:th="http://www.thymeleaf.org">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Gerenciar Categorias</title>
+</head>
+    <body>
+        <div class="container">
+            <h1>⚙️ Gerenciar Categorias</h1>
+
+            <a th:href="@{/}" class="btn-back">⬅️ Voltar para a Home</a>
+
+            <div th:if="${successMessage}" class="alert-success">
+                <p th:text="${successMessage}"></p>
+            </div>
+            
+            <div class="nav-links">
+                <a th:href="@{/categorias/cadastrar}" class="btn-primary">➕ Cadastrar Nova Categoria</a>
+            </div>
+            
+            <hr/>
+            
+            <h2>Lista de Categorias</h2>
+            <table class="data-table" border="1" cellpadding="5" cellspacing="0">
+                <thead>
+                    <tr>
+                        <th>Nome</th>
+                        <th>Criado em</th>
+                        <th>Ações</th>
+                    </tr>
+                </thead>
+                <tbody>
+                    <tr th:if="${categoryPage.empty}" class="empty-row">
+                        <td colspan="4">Nenhuma categoria cadastrada!</td>
+                    </tr>
+                    <tr th:each="category : ${categoryPage.content}">
+                        <td th:text="${category.name}"></td>
+                        <td th:text="${#temporals.format(category.createdAt, 'dd/MM/yyyy HH:mm')}"></td>
+                        <td class="actions">
+                            <a th:href="@{/categorias/editar/{id}(id=${category.id})}" title="Editar" class="btn-edit">Editar</a>
+                            |
+                            <form th:action="@{/categorias/excluir/{id}(id=${category.id})}" method="post" class="form-delete" onsubmit="return confirm('Tem certeza que deseja excluir esta categoria? Isso pode afetar os produtos vinculados.');">
+                                <button type="submit" title="Excluir" class="btn-delete">Excluir</button>
+                            </form>
+                        </td>
+                    </tr>
+                </tbody>
+            </table>
+            
+            <div class="pagination">
+                <div th:if="${categoryPage.totalPages > 1}">
+                    <span th:if="${!categoryPage.first}">
+                        <a th:href="@{/categorias(page=${categoryPage.number - 1})}" class="btn-page">Anterior</a>
+                    </span>
+                    
+                    <span th:each="i : ${#numbers.sequence(0, categoryPage.totalPages - 1)}" class="page-number">
+                        <a 
+                            th:href="@{/categorias(page=${i})}" 
+                            th:text="${i + 1}" 
+                            th:classappend="${i == categoryPage.number} ? 'active' : ''"
+                        >1</a>
+                    </span>
+
+                    <span th:if="${!categoryPage.last}">
+                        <a th:href="@{/categorias(page=${categoryPage.number + 1})}" class="btn-page">Próxima</a>
+                    </span>
+                </div>
+            </div>
+        </div> 
+    </body>
+</html>

@@ -1,0 +1,41 @@
+<!DOCTYPE html>
+<html lang="pt-br" xmlns:th="http://www.thymeleaf.org">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title th:text="${'Detalhes: ' + productDetails.name}">Detalhes do Produto</title>
+</head>
+    <body>
+        <div class="container">
+            <a th:href="@{/}" class="btn-back">⬅️ Voltar para a Home</a>
+            
+            <h1 th:text="${'Detalhes do Produto: ' + productDetails.name}">Detalhes do Produto</h1>
+            
+            <div class="product-details-card">
+                
+                <div th:if="${productDetails.imageUrl != null and productDetails.imageUrl != ''}" class="product-image">
+                    <img th:src="${productDetails.imageUrl}" alt="Imagem do Produto" class="product-img-display">
+                </div>
+
+                <ul class="detail-list">
+                    <li><strong>ID:</strong> <span th:text="${productDetails.id}">1</span></li>
+                    <li><strong>Nome:</strong> <span th:text="${productDetails.name}">Produto Teste</span></li>
+                    <li><strong>Categoria:</strong> <span th:text="${productDetails.category.name}">Categoria X</span></li>
+                    <li><strong>Marca:</strong> <span th:text="${productDetails.brand} ?: 'N/A'">Marca Y</span></li>
+                    <li><strong>Preço:</strong> <span th:text="${#numbers.formatCurrency(productDetails.price)}">R$ 99.99</span></li>
+                    <li><strong>Estoque:</strong> <span th:text="${productDetails.stockQuantity}">100</span></li>
+                    <li class="description-area"><strong>Descrição:</strong> <p th:text="${productDetails.description} ?: 'Sem descrição.'" class="product-description"></p></li>
+                    <li><strong>Criado em:</strong> <span th:text="${#temporals.format(productDetails.createdAt, 'dd/MM/yyyy HH:mm')}">01/01/2023 10:00</span></li>
+                    <li><strong>Última Atualização:</strong> <span th:text="${#temporals.format(productDetails.updatedAt, 'dd/MM/yyyy HH:mm')}">01/01/2023 10:00</span></li>
+                </ul>
+
+                <div class="actions-detail">
+                    <a th:href="@{/produtos/editar/{id}(id=${productDetails.id})}" class="btn-primary">✏️ Editar Produto</a>
+                    <form th:action="@{/produtos/excluir/{id}(id=${productDetails.id})}" method="post" class="form-inline" onsubmit="return confirm('Tem certeza que deseja excluir este produto?');">
+                        <button type="submit" class="btn-danger">🗑️ Excluir Produto</button>
+                    </form>
+                </div>
+            </div>
+        </div> 
+    </body>
+</html>

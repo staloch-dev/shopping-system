@@ -1,0 +1,74 @@
+<!DOCTYPE html>
+<html lang="pt-br" xmlns:th="http://www.thymeleaf.org">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title th:text="${produto.id == null ? 'Cadastrar Novo Produto' : 'Editar Produto'}">Formulário de Produto</title>
+</head>
+    <body>
+        <div class="container">
+            <h1 th:text="${produto.id == null ? '➕ Cadastrar Novo Produto' : '✏️ Editar Produto: ' + produto.name}">Formulário de Produto</h1>
+            
+            <a th:href="@{/}" class="btn-back">⬅️ Voltar para a Home</a>
+
+            <div th:with="actionUrl=${produto.id == null ? '/produtos/cadastrar' : '/produtos/atualizar/' + produto.id}" class="form-wrapper">
+                
+                <form th:action="@{${actionUrl}}" th:object="${produto}" method="post" class="product-form">
+                    <input type="hidden" th:field="*{id}" />
+
+                    <div class="form-group">
+                        <label for="name">Nome do Produto:</label>
+                        <input type="text" id="name" th:field="*{name}" placeholder="Nome do Produto" required th:classappend="${#fields.hasErrors('name') ? 'is-invalid' : ''}"/>
+                        <p th:if="${#fields.hasErrors('name')}" th:errors="*{name}" class="error-message"></p>
+                    </div>
+
+                    <div class="form-group">
+                        <label for="category">Categoria:</label>
+                        <select id="category" th:field="*{category}" required th:classappend="${#fields.hasErrors('category') ? 'is-invalid' : ''}">
+                            <option value="">-- Selecione uma Categoria --</option>
+                            <option 
+                                th:each="cat : ${categories}" 
+                                th:value="${cat.id}" 
+                                th:text="${cat.name}"
+                                th:selected="${produto.category != null and produto.category.id == cat.id}"
+                            >Categoria</option>
+                        </select>
+                        <p th:if="${#fields.hasErrors('category')}" th:errors="*{category}" class="error-message"></p>
+                    </div>
+
+                    <div class="form-group">
+                        <label for="price">Preço (R$):</label>
+                        <input type="number" step="0.01" min="0.01" id="price" th:field="*{price}" placeholder="0.00" required th:classappend="${#fields.hasErrors('price') ? 'is-invalid' : ''}"/>
+                        <p th:if="${#fields.hasErrors('price')}" th:errors="*{price}" class="error-message"></p>
+                    </div>
+
+                    <div class="form-group">
+                        <label for="stockQuantity">Estoque:</label>
+                        <input type="number" min="0" id="stockQuantity" th:field="*{stockQuantity}" placeholder="0" required th:classappend="${#fields.hasErrors('stockQuantity') ? 'is-invalid' : ''}"/>
+                        <p th:if="${#fields.hasErrors('stockQuantity')}" th:errors="*{stockQuantity}" class="error-message"></p>
+                    </div>
+
+                    <div class="form-group">
+                        <label for="brand">Marca:</label>
+                        <input type="text" id="brand" th:field="*{brand}" placeholder="Marca" th:classappend="${#fields.hasErrors('brand') ? 'is-invalid' : ''}"/>
+                        <p th:if="${#fields.hasErrors('brand')}" th:errors="*{brand}" class="error-message"></p>
+                    </div>
+                    
+                    <div class="form-group">
+                        <label for="imageUrl">URL da Imagem:</label>
+                        <input type="url" id="imageUrl" th:field="*{imageUrl}" placeholder="http://link/para/imagem.jpg" th:classappend="${#fields.hasErrors('imageUrl') ? 'is-invalid' : ''}"/>
+                        <p th:if="${#fields.hasErrors('imageUrl')}" th:errors="*{imageUrl}" class="error-message"></p>
+                    </div>
+
+                    <div class="form-group">
+                        <label for="description">Descrição:</label>
+                        <textarea id="description" th:field="*{description}" placeholder="Detalhes do produto" rows="4" th:classappend="${#fields.hasErrors('description') ? 'is-invalid' : ''}"></textarea>
+                        <p th:if="${#fields.hasErrors('description')}" th:errors="*{description}" class="error-message"></p>
+                    </div>
+
+                    <button type="submit" class="btn-submit" th:text="${produto.id == null ? 'Cadastrar Produto' : 'Atualizar Produto'}">Salvar</button>
+                </form>
+            </div>
+        </div> 
+    </body>
+</html>
